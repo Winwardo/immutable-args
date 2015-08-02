@@ -25,12 +25,11 @@ public class ArgsImmutable implements Args {
 		String[] args) throws ArgsException {
 
 		ArgsMap argsMap = new ArgsMap(args);
-
-		tokenStream(schema).map(token -> makeArg(token)).forEach(
+		makeTokenStream(schema).map(token -> makeArg(token)).forEach(
 			arg -> insertArgIntoRelevantMap(arg, argsMap));
 	}
 
-	private Stream<String> tokenStream(String schema) {
+	private Stream<String> makeTokenStream(String schema) {
 		return Arrays
 			.asList(schema.split(","))
 			.stream()
@@ -60,25 +59,44 @@ public class ArgsImmutable implements Args {
 
 		switch (arg.getType()) {
 			case SPECIFIER_BOOLEAN:
-				final boolean parsedBoolean = Boolean.parseBoolean(value);
-				booleans.put(argName, parsedBoolean);
+				putBooleanArg(argName, value);
 				break;
 			case SPECIFIER_STRING:
-				strings.put(argName, value);
+				putStringArg(argName, value);
 				break;
 			case SPECIFIER_INTEGER:
-				try {
-					integers.put(argName, Integer.parseInt(value));
-				} catch (NumberFormatException e) {
-					throw new MalformedArgsException(String.format(
-						"Invalid integer `%s` supplied.",
-						value), e);
-				}
+				putIntegerArg(argName, value);
 				break;
 			default:
 				throw new MalformedSchemaException(String.format(
 					"Invalid token type `%s`.",
 					argName));
+		}
+	}
+
+	public void putStringArg(String argName, String value) {
+		strings.put(argName, value);
+	}
+
+	public void putIntegerArg(String argName, String value) {
+		try {
+			final int parsedInt = Integer.parseInt(value);
+			integers.put(argName, parsedInt);
+		} catch (NumberFormatException e) {
+			throw new MalformedArgsException(String.format(
+				"Invalid integer `%s` supplied.",
+				value), e);
+		}
+	}
+
+	public void putBooleanArg(String argName, String value) {
+		try {
+			final boolean parsedBoolean = Boolean.parseBoolean(value);
+			booleans.put(argName, parsedBoolean);
+		} catch (Exception e) {
+			throw new MalformedArgsException(String.format(
+				"Invalid boolean `%s` supplied.",
+				value), e);
 		}
 	}
 
