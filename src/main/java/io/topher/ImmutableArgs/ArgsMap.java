@@ -45,7 +45,7 @@ public class ArgsMap {
 		}
 	}
 
-	public Map<String, String> get() {
-		return argsData;
+	public String get(String key) {
+		return argsData.get(key);
 	}
 }
