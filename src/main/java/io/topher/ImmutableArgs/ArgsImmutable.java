@@ -25,16 +25,17 @@ public final class ArgsImmutable implements Args {
 		String[] args) throws ArgsException {
 
 		final ArgsMap argsMap = new ArgsMap(args);
-		makeTokenStream(schema).map(token -> makeArg(token)).forEach(
+		makeTokenStream(schema).forEach(
 			arg -> insertArgIntoRelevantMap(arg, argsMap));
 	}
 
-	private Stream<String> makeTokenStream(String schema) {
+	private Stream<Arg> makeTokenStream(String schema) {
 		return Arrays
 			.asList(schema.split(","))
 			.stream()
 			.map(s -> s.trim())
-			.filter(s -> s.length() > 0);
+			.filter(s -> s.length() > 0)
+			.map(token -> makeArg(token));
 	}
 
 	private Arg makeArg(String token) {
@@ -90,10 +91,9 @@ public final class ArgsImmutable implements Args {
 	}
 
 	private void putBooleanArg(String argName, String value) {
-		final String lowerValue = value == null ? "" : value.toLowerCase();
-		if ("true".equals(lowerValue)) {
+		if ("true".equals(value)) {
 			booleans.put(argName, true);
-		} else if ("false".equals(lowerValue)) {
+		} else if ("false".equals(value)) {
 			booleans.put(argName, false);
 		} else {
 			throw new MalformedArgsException(String.format(
