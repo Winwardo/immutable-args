@@ -1,41 +1,34 @@
 package io.topher.ImmutableArgs;
 
+import io.topher.ImmutableArgs.exceptions.ArgsException;
 import io.topher.ImmutableArgs.exceptions.MalformedArgsException;
 import io.topher.ImmutableArgs.exceptions.MalformedSchemaException;
 
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ArgsImmutable implements Args {
 	private static final char			INTEGER_SPECIFIER	= '#';
 	private static final char			STRING_SPECIFIER	= '*';
 
-	private final Map<String, Boolean>	booleans;
-	private final Map<String, String>	strings;
-	private final Map<String, Integer>	integers;
+	private final Map<String, Boolean>	booleans			= new HashMap<String, Boolean>();
+	private final Map<String, String>	strings				= new HashMap<String, String>();
+	private final Map<String, Integer>	integers			= new HashMap<String, Integer>();
 
 	public ArgsImmutable(String schema,
-		String[] args) throws MalformedSchemaException,
-		MalformedArgsException {
-
+		String[] args) throws ArgsException {
 		Map<String, String> argsData = new ArgsMap(args).get();
 
-		booleans = new HashMap<String, Boolean>();
-		strings = new HashMap<String, String>();
-		integers = new HashMap<String, Integer>();
+		List<String> tokens = getTokens(schema);
 
-		String[] tokens = schema.split(",");
-
-		if (argsData.size() != tokens.length && schema.length() != 0) { throw new MalformedArgsException(
+		if (argsData.size() != tokens.size()) { throw new MalformedArgsException(
 			"Number of arguments does not match the schema."); }
 
-		for (String token_ : tokens) {
-			String token = token_.trim();
-			if (token.length() == 0) {
-				continue;
-			}
-
+		for (String token : tokens) {
 			String key;
 
 			if (token.length() == 1) {
@@ -76,6 +69,15 @@ public class ArgsImmutable implements Args {
 
 		}
 
+	}
+
+	private List<String> getTokens(String schema) {
+		return Arrays
+			.asList(schema.split(","))
+			.stream()
+			.map(s -> s.trim())
+			.filter(s -> s.length() > 0)
+			.collect(Collectors.toList());
 	}
 
 	@Override
