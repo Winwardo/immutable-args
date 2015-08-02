@@ -6,9 +6,4 @@ public class MalformedSchemaException extends ArgsException {
 	public MalformedSchemaException(String message) {
 		super(message);
 	}
-
-	public MalformedSchemaException(String message,
-		Throwable cause) {
-		super(message, cause);
-	}
 }
