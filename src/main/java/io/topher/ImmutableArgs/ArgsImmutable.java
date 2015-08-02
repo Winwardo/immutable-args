@@ -3,16 +3,14 @@ package io.topher.ImmutableArgs;
 import io.topher.ImmutableArgs.exceptions.MalformedArgsException;
 import io.topher.ImmutableArgs.exceptions.MalformedSchemaException;
 
-import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 public class ArgsImmutable implements Args {
-	private static PrintStream			o					= System.out;
-
 	private static final char			INTEGER_SPECIFIER	= '#';
 	private static final char			STRING_SPECIFIER	= '*';
+
 	private final Map<String, Boolean>	booleans;
 	private final Map<String, String>	strings;
 	private final Map<String, Integer>	integers;
@@ -21,7 +19,7 @@ public class ArgsImmutable implements Args {
 		String[] args) throws MalformedSchemaException,
 		MalformedArgsException {
 
-		Map<String, String> argsData = argsListToMap(args);
+		Map<String, String> argsData = new ArgsMap(args).get();
 
 		booleans = new HashMap<String, Boolean>();
 		strings = new HashMap<String, String>();
@@ -78,10 +76,6 @@ public class ArgsImmutable implements Args {
 
 		}
 
-	}
-
-	public static Map<String, String> argsListToMap(String[] args) {
-		return new ArgsMap(args).get();
 	}
 
 	@Override
