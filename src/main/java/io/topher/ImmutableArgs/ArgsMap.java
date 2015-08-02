@@ -9,7 +9,7 @@ public class ArgsMap {
 	public ArgsMap(String[] args) {
 		argsData = new HashMap<>();
 
-		boolean lastWasAKey = false;
+		boolean lastTokenWasAKey = false;
 		String key = null;
 		String value = null;
 
@@ -18,28 +18,29 @@ public class ArgsMap {
 			final boolean tokenIsAKey = token.startsWith("-");
 
 			if (tokenIsAKey) {
-				if (lastWasAKey) {
-					addBools(key);
+				if (lastTokenWasAKey) {
+					addBooleans(key);
 				}
 
-				lastWasAKey = true;
-				key = token.substring(1);
+				lastTokenWasAKey = true;
+				key = token.substring(1); // Remove the leading hyphen
 			} else {
 				value = token;
-				if (lastWasAKey) {
+				if (lastTokenWasAKey) {
 					argsData.put(key, value);
 				}
 
-				lastWasAKey = false;
+				lastTokenWasAKey = false;
 			}
 		}
 
-		if (lastWasAKey) {
-			addBools(key);
+		// Capture any trailing booleans
+		if (lastTokenWasAKey) {
+			addBooleans(key);
 		}
 	}
 
-	private void addBools(String bools) {
+	private void addBooleans(String bools) {
 		for (char bool : bools.toCharArray()) {
 			argsData.put("" + bool, "true");
 		}
