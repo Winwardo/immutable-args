@@ -105,6 +105,11 @@ public class TestArgsImmutable {
 		assertEquals(2, args.cardinality());
 	}
 
+	@Test(expected = MalformedArgsException.class)
+	public void getBoolean_invalid() throws ArgsException {
+		new ArgsImmutable("x", new String[] { "-x", "Some value!" });
+	}
+
 	@Test
 	public void getBoolean_true() throws ArgsException {
 		Args args = new ArgsImmutable("x", new String[] { "-x",

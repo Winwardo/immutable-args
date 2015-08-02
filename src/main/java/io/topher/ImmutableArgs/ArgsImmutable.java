@@ -90,13 +90,15 @@ public final class ArgsImmutable implements Args {
 	}
 
 	private void putBooleanArg(String argName, String value) {
-		try {
-			final boolean parsedBoolean = Boolean.parseBoolean(value);
-			booleans.put(argName, parsedBoolean);
-		} catch (Exception e) {
+		final String lowerValue = value == null ? "" : value.toLowerCase();
+		if ("true".equals(lowerValue)) {
+			booleans.put(argName, true);
+		} else if ("false".equals(lowerValue)) {
+			booleans.put(argName, false);
+		} else {
 			throw new MalformedArgsException(String.format(
 				"Invalid boolean `%s` supplied.",
-				value), e);
+				value));
 		}
 	}
 
