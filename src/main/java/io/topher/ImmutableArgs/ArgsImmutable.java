@@ -1,5 +1,8 @@
 package io.topher.ImmutableArgs;
 
+import io.topher.ImmutableArgs.exceptions.MalformedArgsException;
+import io.topher.ImmutableArgs.exceptions.MalformedSchemaException;
+
 import java.io.PrintStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,6 +28,10 @@ public class ArgsImmutable implements Args {
 		integers = new HashMap<String, Integer>();
 
 		String[] tokens = schema.split(",");
+
+		if (argsData.size() != tokens.length && schema.length() != 0) { throw new MalformedArgsException(
+			"Number of arguments does not match the schema."); }
+
 		for (String token_ : tokens) {
 			String token = token_.trim();
 			if (token.length() == 0) {
@@ -40,24 +47,28 @@ public class ArgsImmutable implements Args {
 						token)); }
 				// boolean
 				key = token;
-				final String s = argsData.get(key);
-				final boolean parseBoolean = Boolean.parseBoolean(s);
-				booleans.put(key, parseBoolean);
+				final String value = argsData.get(key);
+				final boolean parsedBoolean = Boolean.parseBoolean(value);
+				booleans.put(key, parsedBoolean);
 				continue;
 			}
 
 			final int lastCharIndex = token.length() - 1;
 			char lastChar = token.charAt(lastCharIndex);
 			key = token.substring(0, lastCharIndex);
+			final String value = argsData.get(key);
 			switch (lastChar) {
 				case STRING_SPECIFIER:
-					o.println("String!");
-					o.println(key);
-					o.println(argsData.get(key));
-					strings.put(key, argsData.get(key));
+					strings.put(key, value);
 					break;
 				case INTEGER_SPECIFIER:
-					integers.put(key, Integer.parseInt(argsData.get(key)));
+					try {
+						integers.put(key, Integer.parseInt(value));
+					} catch (NumberFormatException e) {
+						throw new MalformedArgsException(String.format(
+							"Invalid integer `%s` supplied.",
+							value), e);
+					}
 					break;
 				default:
 					throw new MalformedSchemaException(String.format(

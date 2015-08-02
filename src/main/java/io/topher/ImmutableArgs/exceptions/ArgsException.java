@@ -1,4 +1,4 @@
-package io.topher.ImmutableArgs;
+package io.topher.ImmutableArgs.exceptions;
 
 public class ArgsException extends Exception {
 	private static final long	serialVersionUID	= -3965931086098716472L;
