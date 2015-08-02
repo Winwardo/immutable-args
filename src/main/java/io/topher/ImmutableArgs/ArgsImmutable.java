@@ -12,7 +12,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
-public class ArgsImmutable implements Args {
+public final class ArgsImmutable implements Args {
 	private static final String			SPECIFIER_BOOLEAN	= "";
 	private static final String			SPECIFIER_INTEGER	= "#";
 	private static final String			SPECIFIER_STRING	= "*";
@@ -24,7 +24,7 @@ public class ArgsImmutable implements Args {
 	public ArgsImmutable(String schema,
 		String[] args) throws ArgsException {
 
-		ArgsMap argsMap = new ArgsMap(args);
+		final ArgsMap argsMap = new ArgsMap(args);
 		makeTokenStream(schema).map(token -> makeArg(token)).forEach(
 			arg -> insertArgIntoRelevantMap(arg, argsMap));
 	}
@@ -38,12 +38,12 @@ public class ArgsImmutable implements Args {
 	}
 
 	private Arg makeArg(String token) {
-		Pattern p = Pattern.compile("^([a-zA-Z])(.*?)$");
-		Matcher m = p.matcher(token);
+		final Pattern pattern = Pattern.compile("^([a-zA-Z])(.*?)$");
+		final Matcher matcher = pattern.matcher(token);
 
-		if (m.matches()) {
-			final String name = m.group(1);
-			String type = m.group(2);
+		if (matcher.matches()) {
+			final String name = matcher.group(1);
+			final String type = matcher.group(2);
 
 			return new Arg(name, type);
 		} else {
@@ -74,11 +74,11 @@ public class ArgsImmutable implements Args {
 		}
 	}
 
-	public void putStringArg(String argName, String value) {
+	private void putStringArg(String argName, String value) {
 		strings.put(argName, value);
 	}
 
-	public void putIntegerArg(String argName, String value) {
+	private void putIntegerArg(String argName, String value) {
 		try {
 			final int parsedInt = Integer.parseInt(value);
 			integers.put(argName, parsedInt);
@@ -89,7 +89,7 @@ public class ArgsImmutable implements Args {
 		}
 	}
 
-	public void putBooleanArg(String argName, String value) {
+	private void putBooleanArg(String argName, String value) {
 		try {
 			final boolean parsedBoolean = Boolean.parseBoolean(value);
 			booleans.put(argName, parsedBoolean);
@@ -119,5 +119,4 @@ public class ArgsImmutable implements Args {
 	public int cardinality() {
 		return booleans.size() + strings.size() + integers.size();
 	}
-
 }

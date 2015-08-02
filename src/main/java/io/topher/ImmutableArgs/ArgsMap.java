@@ -14,7 +14,7 @@ public class ArgsMap {
 		String value = null;
 
 		for (int i = 0; i < args.length; i++) {
-			String token = args[i];
+			final String token = args[i];
 			final boolean tokenIsAKey = token.startsWith("-");
 
 			if (tokenIsAKey) {
